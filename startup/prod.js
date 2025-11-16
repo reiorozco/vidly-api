@@ -8,6 +8,7 @@
 const helmet = require("helmet");
 const compression = require("compression");
 const cors = require("cors");
+const { generalLimiter } = require("./rateLimiting");
 
 module.exports = function (app) {
   /**
@@ -50,6 +51,12 @@ module.exports = function (app) {
    * Reduces response size by 60-80% for JSON/text
    */
   app.use(compression());
+
+  /**
+   * Rate Limiting - Prevent abuse and DoS attacks
+   * 100 requests per 15 minutes per IP
+   */
+  app.use("/api", generalLimiter);
 
   /**
    * CORS - Cross-Origin Resource Sharing
