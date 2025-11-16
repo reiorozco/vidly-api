@@ -1,20 +1,21 @@
 {
   "name": "vidly-project",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "commonjs",
   "engines": {
     "node": ">=8.10.0"
   },
-  "description": "",
+  "description": "RESTful API for movie rental service with comprehensive security and best practices",
   "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js",
     "test": "jest --watchAll --verbose --detectOpenHandles --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
     "dev": "export NODE_ENV=development&& nodemon",
     "prod": "export NODE_ENV=production&& node api/index.js",
     "debug": "export DEBUG=Log& node api/index.js"
   },
-  "keywords": [],
+  "keywords": ["api", "rest", "express", "mongodb", "jwt", "security"],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -23,15 +24,15 @@
     "cors": "^2.8.5",
     "debug": "^4.3.3",
     "dotenv": "^12.0.3",
-    "express": "^4.17.2",
+    "express": "^4.21.2",
     "express-async-errors": "^3.1.1",
-    "helmet": "^5.0.1",
+    "helmet": "^8.1.0",
     "joi": "^17.5.0",
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "9.0.0",
     "lodash": "^4.17.21",
     "luxon": "2.5.2",
-    "mongoose": "6.4.6",
+    "mongoose": "6.11.3",
     "morgan": "^1.10.0",
     "pug": "^3.0.2",
     "winston": "^3.6.0",
