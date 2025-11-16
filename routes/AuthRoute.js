@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 
 const { User } = require("../models/UserModel");
 const validate = require("../middleware/validate");
+const { authLimiter } = require("../startup/rateLimiting");
 
 function validateAuth(req) {
   const schema = Joi.object({
@@ -20,7 +21,7 @@ function validateAuth(req) {
   return schema.validate(req);
 }
 
-router.post("/", validate(validateAuth), async (req, res) => {
+router.post("/", [authLimiter, validate(validateAuth)], async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (!user) return res.status(400).send("Invalid email or password.");
 
