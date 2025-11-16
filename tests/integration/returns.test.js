@@ -24,8 +24,8 @@ describe("/api/returns", () => {
   beforeEach(async () => {
     server = require("../../api");
 
-    customerId = mongoose.Types.ObjectId();
-    movieId = mongoose.Types.ObjectId();
+    customerId = new mongoose.Types.ObjectId();
+    movieId = new mongoose.Types.ObjectId();
     token = new User().generateAuthToken();
 
     movie = new Movie({

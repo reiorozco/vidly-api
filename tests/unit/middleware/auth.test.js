@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 describe("auth middleware", () => {
   it("should populate req.user with the payload of a valid JWT", () => {
-    const user = { _id: mongoose.Types.ObjectId(), isAdmin: true };
+    const user = { _id: new mongoose.Types.ObjectId(), isAdmin: true };
     const token = new User(user).generateAuthToken();
     const req = {
       header: jest.fn().mockReturnValue(token),
@@ -14,6 +14,8 @@ describe("auth middleware", () => {
 
     auth(req, res, next);
 
-    expect(req.user).toMatchObject(user);
+    // Mongoose 8: ObjectId is serialized as string in JWT
+    expect(req.user._id).toBe(user._id.toHexString());
+    expect(req.user.isAdmin).toBe(user.isAdmin);
   });
 });
