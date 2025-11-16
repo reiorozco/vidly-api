@@ -81,7 +81,7 @@ describe("/api/customers", () => {
     });
 
     it("should return 404 if no genre with the given id exits", async () => {
-      id = mongoose.Types.ObjectId();
+      id = new mongoose.Types.ObjectId();
 
       const res = await exec();
 
@@ -169,7 +169,7 @@ describe("/api/customers", () => {
     });
 
     it("should return 404 if no customer with the given id exits", async () => {
-      id = mongoose.Types.ObjectId();
+      id = new mongoose.Types.ObjectId();
 
       const res = await exec();
 
@@ -220,7 +220,7 @@ describe("/api/customers", () => {
     });
 
     it("should return 404 if no customer with the given id", async () => {
-      id = mongoose.Types.ObjectId();
+      id = new mongoose.Types.ObjectId();
 
       const res = await exec();
 

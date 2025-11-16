@@ -14,6 +14,8 @@ describe("user.generateAuthToken", () => {
     const token = user.generateAuthToken();
     const decoded = jwt.verify(token, config.JWT_PRIVATE_KEY);
 
-    expect(decoded).toMatchObject(payload);
+    // Mongoose 8: ObjectId is serialized as string in JWT
+    expect(decoded._id).toBe(payload._id.toHexString());
+    expect(decoded.isAdmin).toBe(payload.isAdmin);
   });
 });
