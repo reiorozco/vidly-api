@@ -5,12 +5,19 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const validateObjectId = require("../middleware/validateObjectId");
 const { sanitizeBody, sanitizeUpdate } = require("../middleware/sanitizeUpdate");
+const paginate = require("../middleware/paginate");
 
 const { Genre, validate } = require("../models/GenreModel");
 
-router.get("/", async (req, res) => {
-  const genres = await Genre.find({}).sort({ name: "asc" });
-  res.send(genres);
+router.get("/", paginate(), async (req, res) => {
+  const { skip, limit } = req.pagination;
+
+  const [genres, total] = await Promise.all([
+    Genre.find({}).sort({ name: "asc" }).skip(skip).limit(limit),
+    Genre.countDocuments({}),
+  ]);
+
+  res.paginatedResponse(genres, total);
 });
 
 router.get("/:id", validateObjectId, async (req, res) => {

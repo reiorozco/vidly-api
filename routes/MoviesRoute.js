@@ -5,14 +5,20 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const validateObjectId = require("../middleware/validateObjectId");
 const { sanitizeBody, sanitizeUpdate } = require("../middleware/sanitizeUpdate");
+const paginate = require("../middleware/paginate");
 
 const { Movie, validate } = require("../models/MovieModel");
 const { Genre } = require("../models/GenreModel");
 
-router.get("/", async (req, res) => {
-  const movies = await Movie.find({}).sort({ name: "asc" });
+router.get("/", paginate(), async (req, res) => {
+  const { skip, limit } = req.pagination;
 
-  res.send(movies);
+  const [movies, total] = await Promise.all([
+    Movie.find({}).sort({ name: "asc" }).skip(skip).limit(limit),
+    Movie.countDocuments({}),
+  ]);
+
+  res.paginatedResponse(movies, total);
 });
 
 router.get("/:id", [validateObjectId], async (req, res) => {

@@ -6,10 +6,17 @@ const validateObjectId = require("../middleware/validateObjectId");
 const auth = require("../middleware/auth");
 const validate = require("../middleware/validate");
 const { sanitizeBody, sanitizeUpdate } = require("../middleware/sanitizeUpdate");
+const paginate = require("../middleware/paginate");
 
-router.get("/", [auth], async (req, res) => {
-  const customers = await Customer.find({}).sort({ name: "asc" });
-  res.send(customers);
+router.get("/", [auth, paginate()], async (req, res) => {
+  const { skip, limit } = req.pagination;
+
+  const [customers, total] = await Promise.all([
+    Customer.find({}).sort({ name: "asc" }).skip(skip).limit(limit),
+    Customer.countDocuments({}),
+  ]);
+
+  res.paginatedResponse(customers, total);
 });
 
 router.get("/:id", [auth, validateObjectId], async (req, res) => {
