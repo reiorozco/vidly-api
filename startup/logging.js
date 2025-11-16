@@ -57,12 +57,15 @@ module.exports = function () {
     );
   }
 
-  logger.add(
-    new logger.transports.MongoDB({
-      db: config.DB,
-      options: {
-        useUnifiedTopology: true,
-      },
-    })
-  );
+  // MongoDB logging - Skip in test environment to avoid connection issues
+  if (process.env.NODE_ENV !== "test") {
+    logger.add(
+      new logger.transports.MongoDB({
+        db: config.DB,
+        options: {
+          useUnifiedTopology: true,
+        },
+      })
+    );
+  }
 };

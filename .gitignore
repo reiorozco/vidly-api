@@ -154,7 +154,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+env/.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -264,4 +264,9 @@ Temporary Items
 /Express/Vidly Project/env/
 /Vidly Project/env/
 /Vidly Project/.idea/
-/env/
+
+# Only ignore actual .env file with secrets, allow templates
+env/.env
+!env/.env.example
+!env/test.env
+!env/development.env
