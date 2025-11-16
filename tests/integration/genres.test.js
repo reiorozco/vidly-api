@@ -15,7 +15,7 @@ describe("/api/genres", () => {
   });
 
   describe("GET /", () => {
-    it("should return all genres", async () => {
+    it("should return all genres with pagination", async () => {
       await Genre.collection.insertMany([
         { name: "genre1" },
         { name: "genre2" },
@@ -25,10 +25,13 @@ describe("/api/genres", () => {
       const res = await request(server).get("/api/genres");
 
       expect(res.status).toBe(200);
-      expect(res.body.length).toBe(3);
-      expect(res.body.some((g) => g.name === "genre1")).toBeTruthy();
-      expect(res.body.some((g) => g.name === "genre2")).toBeTruthy();
-      expect(res.body.some((g) => g.name === "genre3")).toBeTruthy();
+      expect(res.body).toHaveProperty("data");
+      expect(res.body).toHaveProperty("pagination");
+      expect(res.body.data.length).toBe(3);
+      expect(res.body.pagination.totalItems).toBe(3);
+      expect(res.body.data.some((g) => g.name === "genre1")).toBeTruthy();
+      expect(res.body.data.some((g) => g.name === "genre2")).toBeTruthy();
+      expect(res.body.data.some((g) => g.name === "genre3")).toBeTruthy();
     });
   });
 
