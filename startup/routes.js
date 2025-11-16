@@ -10,10 +10,18 @@ const usersRoute = require("../routes/UsersRoute");
 const authRoute = require("../routes/AuthRoute");
 const returnsRoute = require("../routes/ReturnsRoute");
 const errorHandler = require("../middleware/error");
+const correlationId = require("../middleware/correlationId");
+const requestLogger = require("../middleware/requestLogger");
 
 module.exports = function (app) {
   app.set("view engine", "pug");
   app.set("views", "./views");
+
+  // Correlation ID for request tracing
+  app.use(correlationId);
+
+  // Request logging
+  app.use(requestLogger);
 
   if (app.get("env") === "development") {
     app.use(morgan("tiny"));
