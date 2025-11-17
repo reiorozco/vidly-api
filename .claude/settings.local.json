@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm outdated:*)",
+      "Bash(mkdir:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npm audit:*)",
+      "Bash(npm test:*)",
+      "Bash(timeout:*)",
+      "Bash(node -e:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(exit 0)",
+      "Bash(dir env:*)",
+      "Bash(set NODE_ENV=development)",
+      "Bash(npm start)",
+      "Bash(ping:*)",
+      "Bash(nul)",
+      "Bash(npm run test:ci:*)",
+      "Bash(findstr:*)",
+      "Bash(echo:*)",
+      "Bash(git tag:*)",
+      "Bash(dir /B docs*.md specs*.md 2)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

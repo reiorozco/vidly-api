@@ -2,10 +2,11 @@
 
 > RESTful API for a movie rental service built with Node.js, Express, and MongoDB
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/reiorozco/vidly-api)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/reiorozco/vidly-api)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
 [![Mongoose](https://img.shields.io/badge/mongoose-8.9.5-green.svg)](https://mongoosejs.com)
 [![Security](https://img.shields.io/badge/vulnerabilities-0-success.svg)](https://github.com/reiorozco/vidly-api)
+[![Coverage](https://img.shields.io/badge/coverage-73.87%25-yellow.svg)](https://github.com/reiorozco/vidly-api)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 🎯 Overview
@@ -16,8 +17,11 @@ Vidly API is a comprehensive RESTful API demonstrating professional Node.js deve
 - ✅ **100% Secure** - 0 known vulnerabilities, 6 critical CVEs resolved
 - ✅ **Modern Stack** - Node.js 18+, Mongoose 8, Express 4.21
 - ✅ **Defense in Depth** - 7 layers of security validation
-- ✅ **Well Tested** - Integration and unit tests with Jest
+- ✅ **Well Tested** - 73.87% test coverage with Jest
 - ✅ **Production Ready** - Deployed on Vercel with MongoDB Atlas
+- ✅ **CI/CD Pipeline** - Automated testing and deployment via GitHub Actions
+- ✅ **Health Checks** - Liveness and readiness endpoints for monitoring
+- ✅ **API Documentation** - Interactive Swagger/OpenAPI docs
 
 ## 🚀 Demo
 
@@ -73,9 +77,9 @@ npm install
 ### 3. Set up environment variables
 ```bash
 # Copy example environment file
-cp env/.env.example env/.env
+cp .env.example .env
 
-# Edit env/.env with your values
+# Edit .env with your values
 ```
 
 **Required environment variables:**
@@ -85,8 +89,10 @@ DB=mongodb://localhost:27017/vidly
 # Or MongoDB Atlas:
 # DB=mongodb+srv://username:password@cluster.mongodb.net/vidly
 
-# JWT Secret (use strong random string in production)
-JWT_PRIVATE_KEY=your-super-secret-jwt-key-change-this
+# JWT Secret (REQUIRED - minimum 32 characters)
+# Generate with: openssl rand -base64 32
+JWT_PRIVATE_KEY=your-secret-key-minimum-32-characters-long-replace-this
+JWT_EXPIRES_IN=1d
 
 # Environment
 NODE_ENV=development
@@ -94,6 +100,16 @@ NODE_ENV=development
 # Server
 HOST=127.0.0.1
 PORT=3000
+
+# Logging
+LOG_LEVEL=debug
+DEBUG=Log
+
+# Rate Limiting (disable for development)
+RATE_LIMIT_ENABLED=false
+
+# CORS
+CORS_ORIGIN=http://localhost:3000,http://localhost:3001
 ```
 
 ### 4. Start the server
@@ -166,6 +182,31 @@ http://localhost:3000/api
 Most endpoints require authentication via JWT token in header:
 ```
 x-auth-token: <your-jwt-token>
+```
+
+### API Documentation
+
+Interactive API documentation is available via Swagger UI:
+```
+http://localhost:3000/api-docs
+```
+
+### Health Checks
+
+Monitor application health with built-in endpoints:
+
+| Endpoint | Type | Description | Response Time |
+|----------|------|-------------|---------------|
+| `/health` | Liveness | Basic health check | 3-5ms |
+| `/ready` | Readiness | Database connectivity check | 90-150ms |
+
+**Example:**
+```bash
+curl http://localhost:3000/health
+# {"status":"ok","uptime":123,"timestamp":"2025-11-16T..."}
+
+curl http://localhost:3000/ready
+# {"status":"ready","database":"connected","timestamp":"2025-11-16T..."}
 ```
 
 ### Endpoints
@@ -251,6 +292,9 @@ curl -X POST http://localhost:3000/api/genres \
 
 ```
 vidly-api/
+├── .github/
+│   └── workflows/
+│       └── ci.yml            # GitHub Actions CI/CD pipeline
 ├── api/
 │   └── index.js              # Application entry point
 ├── config/
@@ -258,16 +302,17 @@ vidly-api/
 ├── docs/
 │   ├── SECURITY-UPDATES.md   # Security documentation
 │   ├── KNOWN-ISSUES.md       # CVE tracking
-│   └── FASE-1-RESUMEN.md     # Phase 1 summary
+│   ├── FASE-1-RESUMEN.md     # Phase 1 summary
+│   ├── FASE-3-ARQUITECTURA.md # Architecture improvements
+│   └── FASE-4-QUALITY-DEVOPS.md # Quality & DevOps guide
 ├── env/
-│   ├── .env.example          # Environment template
-│   ├── development.env       # Development config
-│   └── test.env              # Test config
+│   └── test.env              # Test configuration (for CI/CD)
 ├── middleware/
 │   ├── admin.js              # Admin authorization
 │   ├── auth.js               # JWT authentication
 │   ├── error.js              # Global error handler
-│   ├── sanitizeUpdate.js     # Input sanitization
+│   ├── sanitizeBody.js       # Body sanitization
+│   ├── sanitizeUpdate.js     # Update sanitization
 │   ├── validate.js           # Joi validation wrapper
 │   └── validateObjectId.js   # MongoDB ObjectId validation
 ├── models/
@@ -280,9 +325,11 @@ vidly-api/
 │   ├── AuthRoute.js
 │   ├── CustomersRoute.js
 │   ├── GenresRoute.js
+│   ├── HealthRoute.js        # Health check endpoints
 │   ├── MoviesRoute.js
 │   ├── RentalsRoute.js
 │   ├── ReturnsRoute.js
+│   ├── SwaggerRoute.js       # Swagger documentation
 │   └── UsersRoute.js
 ├── startup/
 │   ├── config.js             # Config validation
@@ -295,6 +342,8 @@ vidly-api/
 │   ├── integration/          # API integration tests
 │   └── unit/                 # Unit tests
 ├── specs/                    # Technical specifications
+├── .env.example              # Environment template
+├── .env                      # Environment variables (not in git)
 ├── CHANGELOG.md              # Version history
 └── package.json
 ```
@@ -303,10 +352,25 @@ vidly-api/
 
 - [CHANGELOG.md](CHANGELOG.md) - Version history and release notes
 - [docs/SECURITY-UPDATES.md](docs/SECURITY-UPDATES.md) - Security improvements guide
+- [docs/FASE-4-QUALITY-DEVOPS.md](docs/FASE-4-QUALITY-DEVOPS.md) - Quality & DevOps guide
 - [docs/KNOWN-ISSUES.md](docs/KNOWN-ISSUES.md) - CVE tracking (all resolved)
 - [specs/](specs/) - Technical specifications and improvement plans
+- Swagger API Docs: http://localhost:3000/api-docs (when running)
 
 ## 🔄 Version History
+
+### v2.2.0 (2025-11-16) - Phase 4 Complete ✨
+- ✅ **CI/CD Pipeline** - GitHub Actions with automated testing
+- ✅ **Health Checks** - Liveness (/health) and Readiness (/ready) endpoints
+- ✅ **Swagger Docs** - Interactive API documentation at /api-docs
+- ✅ **Test Coverage** - Improved to 73.87% (target: 90%)
+- ✅ **New Tests** - Health endpoints, sanitization middleware
+- ✅ **Environment Setup** - Standard .env configuration
+
+### v2.1.0 (2025-11-16) - Phase 3 Complete
+- ✅ Enhanced architecture with body sanitization
+- ✅ Improved error handling and validation
+- ✅ Code organization improvements
 
 ### v2.0.0 (2025-11-16) - Phase 2 Complete
 - ✅ Upgraded Mongoose 6 → 8.9.5
