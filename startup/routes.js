@@ -9,6 +9,7 @@ const rentalsRoute = require("../routes/RentalsRoute");
 const usersRoute = require("../routes/UsersRoute");
 const authRoute = require("../routes/AuthRoute");
 const returnsRoute = require("../routes/ReturnsRoute");
+const healthRoute = require("../routes/HealthRoute");
 const errorHandler = require("../middleware/error");
 const correlationId = require("../middleware/correlationId");
 const requestLogger = require("../middleware/requestLogger");
@@ -16,6 +17,9 @@ const requestLogger = require("../middleware/requestLogger");
 module.exports = function (app) {
   app.set("view engine", "pug");
   app.set("views", "./views");
+
+  // Health checks (must be first, before any middleware)
+  app.use(healthRoute);
 
   // Correlation ID for request tracing
   app.use(correlationId);
