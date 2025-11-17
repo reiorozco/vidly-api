@@ -14,13 +14,39 @@ const mongoose = require("mongoose");
 const config = require("../config/config");
 
 /**
- * GET /health
- *
- * Basic health check endpoint.
- * Returns 200 if the server is running and can handle requests.
- * Does NOT check external dependencies (use /ready for that).
- *
- * Use case: Load balancer health checks, uptime monitoring
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Basic health check
+ *     description: Returns 200 if the server is running and can handle requests. Does NOT check external dependencies.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: healthy
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 uptime:
+ *                   type: number
+ *                   description: Server uptime in seconds
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ *                 version:
+ *                   type: string
+ *                   example: 2.1.0
+ *                 node:
+ *                   type: string
+ *                   example: v22.14.0
  */
 router.get("/health", (req, res) => {
   const healthData = {
@@ -36,13 +62,66 @@ router.get("/health", (req, res) => {
 });
 
 /**
- * GET /ready
- *
- * Readiness check endpoint.
- * Returns 200 only if server AND all dependencies are ready.
- * Checks: MongoDB connection
- *
- * Use case: Kubernetes readiness probes, deployment verification
+ * @swagger
+ * /ready:
+ *   get:
+ *     summary: Readiness check
+ *     description: Returns 200 only if server AND all dependencies are ready. Checks MongoDB connection.
+ *     tags: [Health]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Service and dependencies are ready
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ready
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 checks:
+ *                   type: object
+ *                   properties:
+ *                     mongodb:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: healthy
+ *                         state:
+ *                           type: string
+ *                           example: connected
+ *                         responseTime:
+ *                           type: string
+ *                           example: OK
+ *       503:
+ *         description: Service not ready
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: not ready
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 checks:
+ *                   type: object
+ *                   properties:
+ *                     mongodb:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: unhealthy
+ *                         error:
+ *                           type: string
  */
 router.get("/ready", async (req, res) => {
   try {

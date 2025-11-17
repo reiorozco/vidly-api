@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const debug = require("debug")("Log");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("../config/swagger");
 
 const genresRoute = require("../routes/GenresRoute");
 const customersRoute = require("../routes/CustomersRoute");
@@ -20,6 +22,9 @@ module.exports = function (app) {
 
   // Health checks (must be first, before any middleware)
   app.use(healthRoute);
+
+  // API Documentation (before rate limiting to allow unrestricted access)
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   // Correlation ID for request tracing
   app.use(correlationId);
