@@ -9,12 +9,12 @@
   "description": "RESTful API for movie rental service with comprehensive security and best practices",
   "main": "api/index.js",
   "scripts": {
-    "start": "node api/index.js",
+    "start": "node --no-deprecation api/index.js",
     "test": "jest --watchAll --verbose --detectOpenHandles --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
-    "dev": "export NODE_ENV=development&& nodemon",
-    "prod": "export NODE_ENV=production&& node api/index.js",
-    "debug": "export DEBUG=Log& node api/index.js"
+    "dev": "export NODE_ENV=development&& nodemon --no-deprecation",
+    "prod": "export NODE_ENV=production&& node --no-deprecation api/index.js",
+    "debug": "export DEBUG=Log& node --no-deprecation api/index.js"
   },
   "keywords": [
     "api",
