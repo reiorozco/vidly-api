@@ -1,15 +1,9 @@
 const dotenv = require("dotenv");
-const path = require("path");
 const Joi = require("joi");
 
-// Load environment variables from appropriate .env file
-if (process.env.NODE_ENV === "test") {
-  // In test environment, load from env/test.env
-  dotenv.config({ path: path.resolve(__dirname, "../env/test.env") });
-} else {
-  // In development/production, load from .env in project root
-  dotenv.config();
-}
+// Load environment variables from .env in project root
+// Works for all environments: development, production, and test
+dotenv.config();
 
 // Configuration schema validation
 const envSchema = Joi.object({

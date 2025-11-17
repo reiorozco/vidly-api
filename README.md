@@ -305,8 +305,6 @@ vidly-api/
 │   ├── FASE-1-RESUMEN.md     # Phase 1 summary
 │   ├── FASE-3-ARQUITECTURA.md # Architecture improvements
 │   └── FASE-4-QUALITY-DEVOPS.md # Quality & DevOps guide
-├── env/
-│   └── test.env              # Test configuration (for CI/CD)
 ├── middleware/
 │   ├── admin.js              # Admin authorization
 │   ├── auth.js               # JWT authentication
