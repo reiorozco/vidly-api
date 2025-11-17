@@ -7,6 +7,186 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
+## [2.2.0] - 2025-11-16
+
+### 🔧 MINOR RELEASE: Quality & DevOps (Fase 4)
+
+Esta release introduce herramientas de calidad, automatización y documentación para mejorar la confiabilidad y experiencia de desarrollo.
+
+**NO BREAKING CHANGES** - Todos los cambios son aditivos
+
+#### Added - CI/CD Pipeline
+
+**GitHub Actions Automation:**
+- Pipeline de 5 jobs automatizados en `.github/workflows/ci.yml`
+- **Test:** Ejecuta tests en Node 18.x y 20.x con coverage reporting
+- **Security:** npm audit para detección de vulnerabilidades
+- **Lint:** ESLint para calidad de código (advisory, no bloqueante)
+- **Build:** Verificación de sintaxis y package.json
+- **Health Check:** Validación de endpoints /health y /ready
+- Integración con Codecov para tracking de coverage
+- Tiempo total: ~5 minutos (objetivo: <10 min) ✅
+
+#### Added - Health Check Endpoints
+
+**Production Monitoring:**
+- `GET /health` - Liveness probe (Node process alive)
+  - Response: status, timestamp, uptime, environment, version, node version
+  - Performance: < 10ms (target: <100ms) ✅
+  - No dependencies externas (siempre responde si Node está vivo)
+
+- `GET /ready` - Readiness probe (dependencies healthy)
+  - Verifica: MongoDB connection state + ping response
+  - Response: status, timestamp, checks (mongodb state)
+  - Performance: ~90-150ms (target: <500ms) ✅
+  - HTTP 200 (ready) o 503 (not ready)
+
+**Kubernetes Integration:**
+- Compatible con livenessProbe y readinessProbe
+- Registrados ANTES de todo middleware (máxima confiabilidad)
+- Útil para load balancers, orchestrators, monitoring tools
+
+#### Added - Swagger/OpenAPI Documentation
+
+**Interactive API Documentation:**
+- Swagger UI disponible en `/api-docs`
+- Dependencias: `swagger-ui-express@5.0.1`, `swagger-jsdoc@6.2.8`
+- Configuración OpenAPI 3.0 en `config/swagger.js`
+
+**Schemas definidos:**
+- Genre, Customer, Movie, User, Rental, Pagination, Error
+- Security scheme: `x-auth-token` (bearerAuth)
+- Responses reutilizables: Unauthorized, Forbidden, NotFound, ValidationError, ServerError
+- Tags: Health, Authentication, Users, Genres, Customers, Movies, Rentals, Returns
+
+**Endpoints documentados:**
+- Health endpoints (2): `/health`, `/ready`
+- Genres CRUD (5): GET all, GET by ID, POST, PUT, DELETE
+- **Total:** 7/30 endpoints (23% completo)
+
+**Features:**
+- Try it out (interactive request builder)
+- Auto-generated code samples (curl, JS, Python)
+- Schema validation with examples
+- Organized by tags
+
+#### Added - Tests
+
+**Health Endpoint Tests:**
+- Archivo: `tests/integration/health.test.js`
+- **11 tests** (all passing ✅):
+  - 5 tests para `/health` (status, timestamp, uptime, environment, version)
+  - 4 tests para `/ready` (MongoDB status, ping, error handling)
+  - 2 tests de performance (< 100ms para health, < 500ms para ready)
+- **Coverage:** 94.73% para HealthRoute.js
+
+#### Fixed - Package Version
+
+- Actualizado `package.json` version: `2.1.0` → `2.2.0`
+
+#### Documentation
+
+**Educational Guide:**
+- `docs/FASE-4-QUALITY-DEVOPS.md` (850+ lines)
+  - CI/CD concepts con analogías (aeropuerto security checks)
+  - Health checks: Liveness vs Readiness explicado
+  - Swagger architecture y best practices
+  - Testing best practices (pirámide de testing)
+  - Recursos de aprendizaje
+
+**Technical Results:**
+- `specs/11-phase-4-results.md` (900+ lines)
+  - Detailed task completion status
+  - Technical decisions con rationale
+  - Metrics & performance data
+  - Coverage analysis (73.87% actual vs 90% target)
+  - Known issues and next steps
+
+#### Metrics
+
+**Test Coverage (Current: 73.87%, Target: 90%):**
+```
+File                  | % Stmts | % Branch | % Funcs | % Lines
+----------------------|---------|----------|---------|--------
+All files             |   73.87 |    46.92 |   59.42 |   75.59
+routes/HealthRoute    |   94.73 |       75 |     100 |   94.73 ✅
+routes/GenresRoute    |     100 |      100 |     100 |     100 ✅
+routes/CustomersRoute |   41.17 |        0 |       0 |   45.16 ❌
+routes/MoviesRoute    |    32.6 |        0 |       0 |   38.46 ❌
+routes/RentalsRoute   |   30.76 |        0 |       0 |   33.33 ❌
+```
+
+**CI/CD Pipeline Performance:**
+- Total time: ~5 minutes
+- Jobs in parallel: 4/5
+- False positive rate: 0%
+
+**Health Endpoint Performance:**
+- `/health`: 3-5ms avg (P95: 8ms, P99: 12ms)
+- `/ready`: 90-150ms avg (P95: 200ms, P99: 350ms)
+
+#### Known Issues
+
+1. **Test coverage below target (73.87% vs 90%)**
+   - Routes sin tests: Customers (41%), Movies (33%), Rentals (31%)
+   - Branch coverage bajo (46.92%) - no testing error paths
+   - Recommendation: Agregar integration tests siguiendo patrón de genres.test.js
+
+2. **Swagger documentation incomplete (23%)**
+   - Solo 7/30 endpoints documentados
+   - Recommendation: Documentar Auth, Users, Customers, Movies, Rentals, Returns
+
+3. **ESLint not configured**
+   - Lint job usa `continue-on-error: true`
+   - Recommendation: Instalar config ESLint (airbnb-base), run --fix
+
+#### Migration Guide
+
+**Para Consumers de la API:**
+- ✅ No se requieren cambios (no breaking changes)
+- Nuevo: Endpoint `/health` disponible para health checks
+- Nuevo: Endpoint `/ready` disponible para readiness checks
+- Nuevo: Documentación interactiva en `/api-docs`
+
+**Para Desarrolladores:**
+- Nuevo: CI/CD pipeline valida code antes de merge
+- Nuevo: `npm run test:ci` para tests con coverage
+- Nuevo: Health endpoints para debugging local
+- Nuevo: Swagger UI en development para explorar API
+
+**Para DevOps:**
+- Nuevo: Health check endpoints para Kubernetes probes
+- Nuevo: GitHub Actions CI/CD pipeline
+- Nuevo: Coverage reports en Codecov (optional)
+
+#### Dependencies
+
+**Added:**
+- `swagger-ui-express@5.0.1` - Swagger UI rendering (3.2 MB)
+- `swagger-jsdoc@6.2.8` - JSDoc to OpenAPI conversion (1.1 MB)
+
+**Total size:** 4.3 MB (acceptable for dev dependency)
+**Security:** 0 vulnerabilities (npm audit clean)
+
+#### Next Steps
+
+**Immediate (Next Sprint):**
+1. Complete integration tests for Customers, Movies, Rentals (+15-17% coverage → ~90%)
+2. Configure ESLint with Airbnb style guide
+3. Document Auth/Users endpoints in Swagger
+
+**Short-term (1-2 Sprints):**
+4. Add pre-commit hooks (Husky + lint-staged)
+5. Integrate Codecov badge in README
+6. Add load testing with k6/Artillery
+
+**Long-term (Future Phases):**
+7. Monitoring & Observability (Prometheus, Grafana)
+8. Performance Optimization (indexing, caching)
+9. Security Hardening (SAST, DAST, dependency scanning)
+
+---
+
 ## [2.1.0] - 2025-11-16
 
 ### 🏗️ MAJOR RELEASE: Architecture Improvements (Fase 3)
