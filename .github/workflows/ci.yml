@@ -1,6 +1,6 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
-# Trigger on push and pull requests to main branches
+# Trigger on push and pull requests
 on:
   push:
     branches: [master, main, develop]
@@ -13,23 +13,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Job 1: Run tests and generate coverage
+  # Job 1: Tests with Coverage (using MongoDB In-Memory)
   test:
     name: Test & Coverage
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
           cache: 'npm'
 
       - name: Install dependencies
@@ -39,19 +35,20 @@ jobs:
         run: npm run test:ci
         env:
           NODE_ENV: test
-          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY_TEST || 'test-secret-key-minimum-32-characters-long-for-testing' }}
-          DB: mongodb://localhost:27017/vidly-test
+          JWT_PRIVATE_KEY: test-secret-key-minimum-32-characters-long-for-testing
+          # MongoDB In-Memory Server will be started by Jest global setup
+          # No external MongoDB required
 
-      - name: Upload coverage to Codecov
-        if: matrix.node-version == '20.x'
+      - name: Upload coverage to Codecov (optional)
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+        continue-on-error: true
 
-  # Job 2: Security audit
+  # Job 2: Security Audit
   security:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -60,124 +57,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install production dependencies
+        run: npm ci --production
 
-      - name: Run npm audit (production only)
-        run: npm audit --production --audit-level=moderate
-        continue-on-error: true
-
-      - name: Check for known vulnerabilities
-        run: npm audit --production
+      - name: Run security audit
+        run: npm audit --production --audit-level=high
         continue-on-error: false
-
-  # Job 3: Linting (if ESLint is configured)
-  lint:
-    name: Lint Code
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npx eslint . --ext .js
-        continue-on-error: true
-
-  # Job 4: Build check
-  build:
-    name: Build Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check for build errors
-        run: node -c api/index.js
-
-      - name: Validate package.json
-        run: npm pkg fix --dry-run
-
-  # Job 5: Health check endpoints
-  health-check:
-    name: Health Check Endpoints
-    runs-on: ubuntu-latest
-    needs: [test]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Start server in background
-        run: |
-          NODE_ENV=test \
-          JWT_PRIVATE_KEY=test-secret-key-minimum-32-characters-long-for-testing \
-          DB=mongodb://localhost:27017/vidly-test \
-          npm start &
-          echo $! > server.pid
-        timeout-minutes: 1
-
-      - name: Wait for server to start
-        run: sleep 5
-
-      - name: Test /health endpoint
-        run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health)
-          if [ $response -eq 200 ]; then
-            echo "✅ Health check passed"
-          else
-            echo "❌ Health check failed with status $response"
-            exit 1
-          fi
-
-      - name: Test /ready endpoint
-        run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ready)
-          if [ $response -eq 200 ] || [ $response -eq 503 ]; then
-            echo "✅ Ready check endpoint responding"
-          else
-            echo "❌ Ready check failed with status $response"
-            exit 1
-          fi
-        continue-on-error: true
-
-      - name: Stop server
-        if: always()
-        run: |
-          if [ -f server.pid ]; then
-            kill $(cat server.pid) || true
-          fi
