@@ -10,7 +10,7 @@
 const logger = require("winston");
 const config = require("../config/config");
 
-module.exports = function (err, req, res, next) {
+module.exports = function (err, req, res, _next) {
   const correlationId = req.id || "unknown";
 
   // Operational error (expected) - safe to show to client

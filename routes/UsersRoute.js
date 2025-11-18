@@ -15,7 +15,7 @@ router.get("/me", auth, async (req, res) => {
 
 router.post("/", validate(userValidate), async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send("User already registered.");
+  if (user) {return res.status(400).send("User already registered.");}
 
   user = new User(_.pick(req.body, ["name", "email", "password"]));
   // Hashing Passwords

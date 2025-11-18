@@ -79,7 +79,7 @@ function sanitizeBody(req, res, next) {
 function sanitizeUpdate(req, res, next) {
   // First apply general sanitization
   sanitizeBody(req, res, (err) => {
-    if (err) return next(err);
+    if (err) {return next(err);}
 
     // Additional check for MongoDB operators
     if (req.body) {

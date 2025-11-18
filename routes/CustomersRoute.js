@@ -21,7 +21,7 @@ router.get("/", [auth, paginate()], async (req, res) => {
 
 router.get("/:id", [auth, validateObjectId], async (req, res) => {
   const customer = await Customer.findById(req.params.id);
-  if (!customer) return res.status(404).send("This customer wasn't found.");
+  if (!customer) {return res.status(404).send("This customer wasn't found.");}
   res.send(customer);
 });
 
@@ -43,7 +43,7 @@ router.put(
       { new: true }
     );
 
-    if (!customer) return res.status(404).send("This customer wasn't found.");
+    if (!customer) {return res.status(404).send("This customer wasn't found.");}
 
     res.send(customer);
   }
@@ -52,7 +52,7 @@ router.put(
 router.delete("/:id", [auth, validateObjectId], async (req, res) => {
   const customer = await Customer.findByIdAndDelete({ _id: req.params.id });
 
-  if (!customer) return res.status(404).send("This customer wasn't found.");
+  if (!customer) {return res.status(404).send("This customer wasn't found.");}
 
   res.send(customer);
 });

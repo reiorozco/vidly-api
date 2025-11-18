@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+
+# GitHub
+.github/
+
+# Docs (not code)
+docs/
+specs/
+
+# Public assets
+public/
+views/
+
+# Test coverage reports
+.nyc_output/

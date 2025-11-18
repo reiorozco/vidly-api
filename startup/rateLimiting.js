@@ -12,7 +12,7 @@ const generalLimiter = rateLimit({
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  skip: (req) => config.NODE_ENV === "test", // Skip rate limiting in test environment
+  skip: (_req) => config.NODE_ENV === "test", // Skip rate limiting in test environment
 });
 
 // Rate limiter estricto para autenticación (previene brute force attacks)
@@ -24,7 +24,7 @@ const authLimiter = rateLimit({
     message: "Account temporarily locked. Try again in 15 minutes",
   },
   skipSuccessfulRequests: true, // No contar requests exitosos
-  skip: (req) => config.NODE_ENV === "test",
+  skip: (_req) => config.NODE_ENV === "test",
 });
 
 // Rate limiter para creación de recursos (previene spam)
@@ -35,7 +35,7 @@ const createLimiter = rateLimit({
     error: "Too many create requests",
     message: "Slow down! Max 10 creations per minute",
   },
-  skip: (req) => config.NODE_ENV === "test",
+  skip: (_req) => config.NODE_ENV === "test",
 });
 
 module.exports = {

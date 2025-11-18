@@ -24,7 +24,8 @@
       "Bash(findstr:*)",
       "Bash(echo:*)",
       "Bash(git tag:*)",
-      "Bash(dir /B docs*.md specs*.md 2)"
+      "Bash(dir /B docs*.md specs*.md 2)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

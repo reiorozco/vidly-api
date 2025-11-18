@@ -1,7 +1,6 @@
 const { Customer } = require("../../models/CustomerModel");
 const request = require("supertest");
 const mongoose = require("mongoose");
-const { Genre } = require("../../models/GenreModel");
 
 let server;
 

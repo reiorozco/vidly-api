@@ -90,7 +90,7 @@ router.get("/", paginate(), async (req, res) => {
  */
 router.get("/:id", validateObjectId, async (req, res) => {
   const genre = await Genre.findById(req.params.id);
-  if (!genre) return res.status(404).send("This genre wasn't found.");
+  if (!genre) {return res.status(404).send("This genre wasn't found.");}
   res.send(genre);
 });
 
@@ -132,7 +132,7 @@ router.get("/:id", validateObjectId, async (req, res) => {
 // Middleware: auth → sanitizeBody → Joi validation → Mongoose schema
 router.post("/", [auth, sanitizeBody], async (req, res) => {
   const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) {return res.status(400).send(error.details[0].message);}
 
   let genre = new Genre({ name: req.body.name });
   genre = await genre.save();
@@ -187,14 +187,14 @@ router.post("/", [auth, sanitizeBody], async (req, res) => {
 // Note: Explicit field selection ({ name }) prevents unintended updates
 router.put("/:id", [auth, validateObjectId, sanitizeUpdate], async (req, res) => {
   const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) {return res.status(400).send(error.details[0].message);}
 
   const genre = await Genre.findByIdAndUpdate(
     { _id: req.params.id },
     { name: req.body.name },
     { new: true }
   );
-  if (!genre) return res.status(404).send("This genre wasn't found.");
+  if (!genre) {return res.status(404).send("This genre wasn't found.");}
   res.send(genre);
 });
 
@@ -231,7 +231,7 @@ router.put("/:id", [auth, validateObjectId, sanitizeUpdate], async (req, res) =>
 router.delete("/:id", [auth, admin, validateObjectId], async (req, res) => {
   const genre = await Genre.findByIdAndDelete({ _id: req.params.id });
 
-  if (!genre) return res.status(404).send("This genre wasn't found.");
+  if (!genre) {return res.status(404).send("This genre wasn't found.");}
 
   res.send(genre);
 });
