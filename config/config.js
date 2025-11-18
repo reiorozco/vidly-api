@@ -17,7 +17,13 @@ const envSchema = Joi.object({
   PORT: Joi.number().port().default(3000),
 
   // Database
-  DB: Joi.string().required(),
+  // In test environment, DB is optional because we use MongoDB In-Memory Server
+  // The in-memory URI is set by Jest global setup (tests/setup.js) in global.__MONGO_URI__
+  DB: Joi.string().when("NODE_ENV", {
+    is: "test",
+    then: Joi.optional(),
+    otherwise: Joi.required(),
+  }),
 
   // Authentication
   JWT_PRIVATE_KEY: Joi.string().min(32).required(),
