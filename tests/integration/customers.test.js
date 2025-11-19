@@ -1,13 +1,16 @@
 const { Customer } = require("../../models/CustomerModel");
+const { User } = require("../../models/UserModel");
 const request = require("supertest");
 const mongoose = require("mongoose");
 const { closeServer } = require("../helpers/teardown");
 
 let server;
+let token;
 
 describe("/api/customers", () => {
   beforeEach(() => {
     server = require("../../api");
+    token = new User().generateAuthToken();
   });
   afterEach(async () => {
     await Customer.deleteMany({});
@@ -16,7 +19,9 @@ describe("/api/customers", () => {
 
   describe("GET /", () => {
     const exec = () => {
-      return request(server).get("/api/customers");
+      return request(server)
+        .get("/api/customers")
+        .set("x-auth-token", token);
     };
 
     beforeEach(async () => {
@@ -40,10 +45,13 @@ describe("/api/customers", () => {
       const res = await exec();
 
       expect(res.status).toBe(200);
-      expect(res.body.length).toBe(3);
-      expect(res.body.some((c) => c.name === "Customer1"));
-      expect(res.body.some((c) => c.name === "Customer2"));
-      expect(res.body.some((c) => c.name === "Customer3"));
+      expect(res.body).toHaveProperty("data");
+      expect(res.body).toHaveProperty("pagination");
+      expect(res.body.data.length).toBe(3);
+      expect(res.body.pagination.totalItems).toBe(3);
+      expect(res.body.data.some((c) => c.name === "Customer1")).toBeTruthy();
+      expect(res.body.data.some((c) => c.name === "Customer2")).toBeTruthy();
+      expect(res.body.data.some((c) => c.name === "Customer3")).toBeTruthy();
     });
   });
 
@@ -52,7 +60,9 @@ describe("/api/customers", () => {
     let customer;
 
     const exec = () => {
-      return request(server).get(`/api/customers/${id}`);
+      return request(server)
+        .get(`/api/customers/${id}`)
+        .set("x-auth-token", token);
     };
 
     beforeEach(async () => {
@@ -94,7 +104,10 @@ describe("/api/customers", () => {
     let phone;
 
     const exec = () => {
-      return request(server).post("/api/customers").send({ name, phone });
+      return request(server)
+        .post("/api/customers")
+        .set("x-auth-token", token)
+        .send({ name, phone });
     };
 
     beforeEach(() => {
@@ -136,6 +149,7 @@ describe("/api/customers", () => {
     const exec = () => {
       return request(server)
         .put(`/api/customers/${id}`)
+        .set("x-auth-token", token)
         .send({ isGold, name: newName, phone });
     };
 
@@ -196,7 +210,9 @@ describe("/api/customers", () => {
     let id;
 
     const exec = () => {
-      return request(server).delete(`/api/customers/${id}`);
+      return request(server)
+        .delete(`/api/customers/${id}`)
+        .set("x-auth-token", token);
     };
 
     beforeEach(async () => {

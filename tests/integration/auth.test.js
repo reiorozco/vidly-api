@@ -2,6 +2,8 @@ const request = require("supertest");
 const { User } = require("../../models/UserModel");
 const { Genre } = require("../../models/GenreModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const config = require("../../config/config");
 const { closeServer } = require("../helpers/teardown");
 
 let server;
@@ -115,7 +117,15 @@ describe("/api/auth", () => {
       const res = await exec();
 
       expect(res.status).toBe(200);
-      expect(res.text).toBe(token);
+
+      // Verify token exists and is valid
+      expect(res.text).toBeTruthy();
+
+      // Decode and verify token contains correct user data
+      const decoded = jwt.verify(res.text, config.JWT_PRIVATE_KEY);
+      expect(decoded).toHaveProperty("_id", user._id.toHexString());
+      expect(decoded).toHaveProperty("name", user.name);
+      expect(decoded).toHaveProperty("email", user.email);
     });
   });
 });
