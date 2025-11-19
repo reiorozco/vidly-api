@@ -1,5 +1,6 @@
 const request = require("supertest");
 const { User } = require("../../models/UserModel");
+const { closeServer } = require("../helpers/teardown");
 
 let server;
 
@@ -9,7 +10,7 @@ describe("/api/users", () => {
   });
   afterEach(async () => {
     await User.deleteMany({});
-    await server.close();
+    await closeServer(server);
   });
 
   describe("GET /me", () => {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const request = require("supertest");
+const { closeServer } = require("../helpers/teardown");
 
 const { DateTime } = require("luxon");
 const { Rental } = require("../../models/RentalModel");
@@ -57,7 +58,7 @@ describe("/api/returns", () => {
   afterEach(async () => {
     await Rental.deleteMany({});
     await Movie.deleteMany({});
-    await server.close();
+    await closeServer(server);
   });
 
   it("should return 401 if client isn't logged in", async () => {

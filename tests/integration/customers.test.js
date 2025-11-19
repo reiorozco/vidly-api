@@ -1,6 +1,7 @@
 const { Customer } = require("../../models/CustomerModel");
 const request = require("supertest");
 const mongoose = require("mongoose");
+const { closeServer } = require("../helpers/teardown");
 
 let server;
 
@@ -10,7 +11,7 @@ describe("/api/customers", () => {
   });
   afterEach(async () => {
     await Customer.deleteMany({});
-    await server.close();
+    await closeServer(server);
   });
 
   describe("GET /", () => {

@@ -28,34 +28,49 @@ module.exports = function () {
     })
   );
 
-  logger.add(
-    new logger.transports.File({
-      level: "error",
-      filename: "logExceptions.log",
-      handleRejections: true,
-    })
-  );
-
-  process.on("unhandledrejection", (ex) => {
-    throw ex;
-  });
-
-  logger.add(
-    new logger.transports.File({
-      filename: "logFile.log",
-    })
-  );
-
-  if (process.env.NODE_ENV !== "production") {
+  // In test environment, only use Console transport to avoid open file handles
+  // File transports prevent Jest from exiting gracefully
+  if (config.NODE_ENV === "test") {
     logger.add(
       new logger.transports.Console({
         format: logger.format.combine(
           logger.format.colorize(),
           logger.format.simple()
         ),
+        silent: true, // Silence console output in tests
       })
     );
+  } else {
+    // Production/Development: Use File transports
+    logger.add(
+      new logger.transports.File({
+        level: "error",
+        filename: "logExceptions.log",
+        handleRejections: true,
+      })
+    );
+
+    logger.add(
+      new logger.transports.File({
+        filename: "logFile.log",
+      })
+    );
+
+    if (config.NODE_ENV !== "production") {
+      logger.add(
+        new logger.transports.Console({
+          format: logger.format.combine(
+            logger.format.colorize(),
+            logger.format.simple()
+          ),
+        })
+      );
+    }
   }
+
+  process.on("unhandledrejection", (ex) => {
+    throw ex;
+  });
 
   // MongoDB logging - Skip in test environment to avoid connection issues
   if (process.env.NODE_ENV !== "test") {

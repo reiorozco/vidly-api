@@ -2,6 +2,7 @@ const request = require("supertest");
 const { User } = require("../../models/UserModel");
 const { Genre } = require("../../models/GenreModel");
 const bcrypt = require("bcrypt");
+const { closeServer } = require("../helpers/teardown");
 
 let server;
 
@@ -11,7 +12,7 @@ describe("auth middleware", () => {
   });
   afterEach(async () => {
     await Genre.deleteMany({});
-    await server.close();
+    await closeServer(server);
   });
 
   let token;
@@ -56,7 +57,7 @@ describe("/api/auth", () => {
   });
   afterEach(async () => {
     await User.deleteMany({});
-    await server.close();
+    await closeServer(server);
   });
 
   describe("POST /", () => {

@@ -1,5 +1,6 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
+const { closeServer } = require("../helpers/teardown");
 
 let server;
 
@@ -9,7 +10,7 @@ describe("Health Check Endpoints", () => {
   });
 
   afterEach(async () => {
-    await server.close();
+    await closeServer(server);
   });
 
   describe("GET /health", () => {
@@ -85,8 +86,8 @@ describe("Health Check Endpoints", () => {
       expect(res.body).toHaveProperty("status", "not ready");
       expect(res.body.checks.mongodb.status).toBe("unhealthy");
 
-      // Reconnect for cleanup
-      await mongoose.connect(process.env.DB);
+      // Reconnect for cleanup using MongoDB In-Memory URI
+      await mongoose.connect(process.env.MONGO_URI);
     });
 
     it("should return valid timestamp format", async () => {
