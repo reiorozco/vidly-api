@@ -18,7 +18,7 @@ const envSchema = Joi.object({
 
   // Database
   // In test environment, DB is optional because we use MongoDB In-Memory Server
-  // The in-memory URI is set by Jest global setup (tests/setup.js) in global.__MONGO_URI__
+  // The in-memory URI is set by Jest global setup (tests/setup.js) in process.env.MONGO_URI
   DB: Joi.string().when("NODE_ENV", {
     is: "test",
     then: Joi.optional(),

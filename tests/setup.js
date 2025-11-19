@@ -22,8 +22,9 @@ module.exports = async () => {
   // Get connection URI
   const mongoUri = mongoServer.getUri();
 
-  // Store URI in global variable for tests to use
-  global.__MONGO_URI__ = mongoUri;
+  // Store URI in process.env (not global) so it's available to Jest workers
+  // Jest workers are child processes, and global vars don't transfer, but env vars do
+  process.env.MONGO_URI = mongoUri;
   global.__MONGO_SERVER__ = mongoServer;
 
   console.log('\n🚀 MongoDB In-Memory Server started');
