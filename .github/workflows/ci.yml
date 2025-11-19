@@ -1,71 +1,39 @@
-name: CI Pipeline
+name: CI
 
-# Trigger on push and pull requests
 on:
   push:
     branches: [master, main, develop]
   pull_request:
     branches: [master, main, develop]
 
-# Cancel in-progress runs when a new run is triggered
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Job 1: Tests with Coverage (using MongoDB In-Memory)
   test:
-    name: Test & Coverage
+    name: Tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests with coverage
-        run: npm run test:ci
+      - run: npm ci
+      - run: npm run test:ci
         env:
           NODE_ENV: test
           JWT_PRIVATE_KEY: test-secret-key-minimum-32-characters-long-for-testing
-          # MongoDB In-Memory Server will be started by Jest global setup
-          # No external MongoDB required
 
-      - name: Upload coverage to Codecov (optional)
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-        continue-on-error: true
-
-  # Job 2: Security Audit
   security:
-    name: Security Audit
+    name: Security
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
-
-      - name: Install production dependencies
-        run: npm ci --production
-
-      - name: Run security audit
-        run: npm audit --production --audit-level=high
-        continue-on-error: false
+      - run: npm ci --production
+      - run: npm audit --production --audit-level=high
