@@ -24,8 +24,8 @@
     "jwt",
     "security"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Rei Orozco",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "compression": "^1.7.4",
