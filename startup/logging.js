@@ -40,8 +40,21 @@ module.exports = function () {
         silent: true, // Silence console output in tests
       })
     );
+  } else if (process.env.VERCEL) {
+    // Serverless (Vercel): solo Console. Vercel captura stdout/stderr.
+    // NO usar File (el filesystem es de solo lectura) ni MongoDB (una segunda
+    // conexión inestable cuyos timeouts provocan unhandledRejection y crashean
+    // la función → 500 sin cabeceras CORS).
+    logger.add(
+      new logger.transports.Console({
+        format: logger.format.combine(
+          logger.format.colorize(),
+          logger.format.simple()
+        ),
+      })
+    );
   } else {
-    // Production/Development: Use File transports
+    // Production/Development local: File transports
     logger.add(
       new logger.transports.File({
         level: "error",
@@ -72,8 +85,9 @@ module.exports = function () {
     throw ex;
   });
 
-  // MongoDB logging - Skip in test environment to avoid connection issues
-  if (process.env.NODE_ENV !== "test") {
+  // MongoDB logging - solo fuera de test y de serverless (en Vercel la segunda
+  // conexión de winston-mongodb hace timeout intermitente y crashea la función).
+  if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
     logger.add(
       new logger.transports.MongoDB({
         db: config.DB,
