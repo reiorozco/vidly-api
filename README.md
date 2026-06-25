@@ -26,7 +26,7 @@ Vidly API is a comprehensive RESTful API demonstrating professional Node.js deve
 ## 🚀 Demo
 
 - **API**: Deployed on Vercel
-- **Client**: [Vidly App](https://vidly-app-reiorozco.vercel.app)
+- **Client**: [Vidly App](https://vidly-app-six.vercel.app)
 - **Client Repo**: [reiorozco/Vidly-APP](https://github.com/reiorozco/Vidly-APP)
 
 ## 📋 Requirements
