@@ -3,6 +3,12 @@ const app = express();
 const config = require("../config/config");
 const logger = require("winston");
 
+// Detrás del proxy de Vercel: confiar en X-Forwarded-* para obtener la IP real
+// del cliente y que express-rate-limit identifique correctamente a los usuarios.
+if (process.env.VERCEL) {
+  app.set("trust proxy", 1);
+}
+
 if (config.NODE_ENV === "production") {
   require("../startup/prod")(app);
 }
