@@ -13,17 +13,19 @@ module.exports = function () {
   const db = process.env.MONGO_URI || config.DB;
 
   // Connect to MongoDB
-  // NOTE: For Node.js 20+, ensure connection string includes &tls=true
-  // to prevent DEP0170 deprecation warnings (not &ssl=true)
-  mongoose.connect(db)
+  // serverSelectionTimeoutMS keeps the connection from hanging in serverless
+  // (Vercel kills the function at ~10s) so the real error surfaces in the logs.
+  mongoose.connect(db, { serverSelectionTimeoutMS: 8000 })
     .then(() => {
       const dbType = process.env.MONGO_URI ? 'MongoDB In-Memory' : 'MongoDB';
       logger.info(`Connected to ${dbType} (Mongoose ${mongoose.version})`);
     })
     .catch((err) => {
+      // console.error guarantees the message reaches Vercel's runtime logs
+      console.error('MongoDB connection error:', err && err.message ? err.message : err);
       logger.error('MongoDB connection error:', err);
-      // Don't exit in test environment to allow Jest to handle the error
-      if (config.NODE_ENV !== 'test') {
+      // In serverless, don't kill the container; let the request fail and retry.
+      if (config.NODE_ENV !== 'test' && !process.env.VERCEL) {
         process.exit(1);
       }
     });
