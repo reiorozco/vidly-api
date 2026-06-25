@@ -13,9 +13,12 @@ module.exports = function () {
   const db = process.env.MONGO_URI || config.DB;
 
   // Connect to MongoDB
-  // serverSelectionTimeoutMS keeps the connection from hanging in serverless
-  // (Vercel kills the function at ~10s) so the real error surfaces in the logs.
-  mongoose.connect(db, { serverSelectionTimeoutMS: 8000 })
+  // - serverSelectionTimeoutMS: evita que la conexión se cuelgue en serverless
+  //   (Vercel mata la función a ~10s) y deja aflorar el error real en los logs.
+  // - family: 4 fuerza IPv4: Node 18+ resuelve DNS-SRV de Atlas por IPv6 y se
+  //   cuelga en entornos serverless; forzar IPv4 evita ese hang.
+  console.log('[db] conectando a MongoDB...');
+  mongoose.connect(db, { serverSelectionTimeoutMS: 8000, family: 4 })
     .then(() => {
       const dbType = process.env.MONGO_URI ? 'MongoDB In-Memory' : 'MongoDB';
       logger.info(`Connected to ${dbType} (Mongoose ${mongoose.version})`);
