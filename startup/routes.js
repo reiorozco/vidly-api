@@ -1,8 +1,29 @@
 const express = require("express");
 const morgan = require("morgan");
 const debug = require("debug")("Log");
-const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("../config/swagger");
+
+// Swagger UI loaded from a CDN and pointed at /api/openapi.json. swagger-ui-express's
+// bundled static assets are not traced into the serverless function on Vercel, so the
+// CDN approach is the reliable way to serve the interactive docs in production.
+const SWAGGER_UI_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vidly API — Swagger UI</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
+  <script>
+    window.onload = function () {
+      window.ui = SwaggerUIBundle({ url: "/api/openapi.json", dom_id: "#swagger-ui", deepLinking: true });
+    };
+  </script>
+</body>
+</html>`;
 
 const genresRoute = require("../routes/GenresRoute");
 const customersRoute = require("../routes/CustomersRoute");
@@ -23,9 +44,17 @@ module.exports = function (app) {
   // Health checks (must be first, before any middleware)
   app.use(healthRoute);
 
-  // Interactive API documentation (Swagger UI). Enabled in all environments:
-  // this is a public demo API with seeded data, so the docs are a showcase.
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  // Interactive API documentation (Swagger UI) — served from a CDN (see SWAGGER_UI_HTML),
+  // with a route-scoped CSP that allows the unpkg assets. Public demo API, docs are a showcase.
+  app.get("/api-docs", (req, res) => {
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self'; img-src 'self' data: https:; " +
+        "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
+        "script-src 'self' 'unsafe-inline' https://unpkg.com; connect-src 'self'"
+    );
+    res.type("html").send(SWAGGER_UI_HTML);
+  });
 
   // OpenAPI Specification (JSON) - Available in all environments
   // Use this with external tools like Postman, Insomnia, or SwaggerHub
