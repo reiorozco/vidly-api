@@ -12,6 +12,7 @@ const SWAGGER_UI_HTML = `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Vidly API — Swagger UI</title>
+  <link rel="icon" href="data:," />
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
 </head>
 <body>
