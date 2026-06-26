@@ -46,6 +46,17 @@ const HOME_HTML = `<!DOCTYPE html>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="Vidly API — a RESTful movie-rental API built with Node.js, Express and MongoDB. Interactive docs, live endpoints and a React client." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://vidly-api.vercel.app/" />
+<meta property="og:title" content="Vidly API — RESTful movie-rental API" />
+<meta property="og:description" content="RESTful movie-rental API (Node.js · Express · MongoDB) with interactive Swagger docs, live endpoints and a React client." />
+<meta property="og:image" content="https://vidly-api.vercel.app/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Vidly API — RESTful movie-rental API" />
+<meta name="twitter:description" content="RESTful movie-rental API with interactive Swagger docs, live endpoints and a React client." />
+<meta name="twitter:image" content="https://vidly-api.vercel.app/og.png" />
 <link rel="icon" href="data:," />
 <title>Vidly API — RESTful movie-rental API</title>
 <style>
