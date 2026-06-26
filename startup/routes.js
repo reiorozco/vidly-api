@@ -23,11 +23,9 @@ module.exports = function (app) {
   // Health checks (must be first, before any middleware)
   app.use(healthRoute);
 
-  // API Documentation (only in development for security)
-  // In production, use exported OpenAPI spec or external documentation
-  if (app.get("env") !== "production") {
-    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  }
+  // Interactive API documentation (Swagger UI). Enabled in all environments:
+  // this is a public demo API with seeded data, so the docs are a showcase.
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   // OpenAPI Specification (JSON) - Available in all environments
   // Use this with external tools like Postman, Insomnia, or SwaggerHub

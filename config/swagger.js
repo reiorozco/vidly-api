@@ -18,7 +18,7 @@ const options = {
         "RESTful API for movie rental service with comprehensive security and best practices",
       contact: {
         name: "API Support",
-        url: "https://github.com/yourusername/vidly-api",
+        url: "https://github.com/reiorozco/vidly-api",
       },
       license: {
         name: "ISC",
@@ -27,12 +27,12 @@ const options = {
     },
     servers: [
       {
-        url: `http://${config.HOST}:${config.PORT}`,
-        description: "Development server",
+        url: "https://vidly-api.vercel.app",
+        description: "Production",
       },
       {
-        url: "https://vidly-api-production.herokuapp.com",
-        description: "Production server",
+        url: `http://${config.HOST}:${config.PORT}`,
+        description: "Development server",
       },
     ],
     components: {

@@ -173,9 +173,12 @@ See [docs/SECURITY-UPDATES.md](docs/SECURITY-UPDATES.md) for detailed security d
 
 ## 📚 API Documentation
 
+**🔗 Live:** [Interactive Swagger UI](https://vidly-api.vercel.app/api-docs) · [OpenAPI spec (JSON)](https://vidly-api.vercel.app/api/openapi.json) · [Live endpoint example](https://vidly-api.vercel.app/api/movies)
+
 ### Base URL
 ```
-http://localhost:3000/api
+Production:  https://vidly-api.vercel.app/api
+Local:       http://localhost:3000/api
 ```
 
 ### Authentication
@@ -188,7 +191,8 @@ x-auth-token: <your-jwt-token>
 
 Interactive API documentation is available via Swagger UI:
 ```
-http://localhost:3000/api-docs
+Production:  https://vidly-api.vercel.app/api-docs
+Local:       http://localhost:3000/api-docs
 ```
 
 ### Health Checks
