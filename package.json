@@ -31,7 +31,7 @@
     "compression": "^1.7.4",
     "cors": "^2.8.6",
     "debug": "^4.3.3",
-    "dotenv": "^12.0.3",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.2.0",
@@ -39,23 +39,23 @@
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "9.0.3",
     "lodash": "^4.17.21",
-    "luxon": "2.5.2",
+    "luxon": "3.7.2",
     "mongoose": "^9.7.3",
     "morgan": "^1.11.0",
     "pug": "^3.0.4",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
-    "winston-mongodb": "^5.0.7"
+    "winston-mongodb": "^7.0.1"
   },
   "devDependencies": {
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-node": "^11.1.0",
     "jest": "^30.2.0",
-    "mongodb-memory-server": "^9.1.6",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
-    "prettier": "^2.5.1",
+    "prettier": "^3.9.4",
     "supertest": "^7.2.2"
   },
   "overrides": {
