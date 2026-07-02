@@ -1,6 +1,11 @@
-# Dependabot — tier portafolio.
-# Objetivo: mantener el repo al dia y seguro, con poco ruido.
-#  - frecuencia mensual + 1 PR agrupado (minor/patch/major) en vez de goteo suelto.
+# Dependabot — tier portafolio (backend Node/Express/Mongo).
+# Objetivo: mantener el repo al dia y seguro, con poco ruido, PERO sin agrupar
+# los majors de backend riesgosos.
+#  - grupo mensual npm-all: minor/patch de todo + majors de deps NO criticas.
+#  - express / mongoose / joi se EXCLUYEN del grupo: sus majors llegan como PRs
+#    individuales y aislados, para migrar y probar (build + jest) uno por uno.
+#    (ej: express 5 elimina la necesidad de express-async-errors; mongoose y joi
+#     tienen breaking changes de esquema/validacion). Agruparlos rompe CI.
 #  - se ignoran los majors de dev-tooling (eslint/typescript/@types): rompen el
 #    build sin aportar seguridad; solo son "estar al dia" del linter.
 #  - los updates de SEGURIDAD llegan igual al instante (canal aparte, no se silencia).
@@ -10,11 +15,15 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 8
     groups:
       npm-all:
         patterns:
           - "*"
+        exclude-patterns:
+          - "express"
+          - "mongoose"
+          - "joi"
         update-types:
           - "minor"
           - "patch"
