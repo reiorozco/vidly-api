@@ -1,14 +1,43 @@
+# Dependabot — tier portafolio.
+# Objetivo: mantener el repo al dia y seguro, con poco ruido.
+#  - frecuencia mensual + 1 PR agrupado (minor/patch/major) en vez de goteo suelto.
+#  - se ignoran los majors de dev-tooling (eslint/typescript/@types): rompen el
+#    build sin aportar seguridad; solo son "estar al dia" del linter.
+#  - los updates de SEGURIDAD llegan igual al instante (canal aparte, no se silencia).
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     open-pull-requests-limit: 5
     groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
+      npm-all:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+          - "major"
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/*"
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "chore(ci)"
