@@ -1,4 +1,3 @@
-require("express-async-errors");
 const logger = require("winston");
 require("winston-mongodb");
 const config = require("../config/config");
