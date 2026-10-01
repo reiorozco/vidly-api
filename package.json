@@ -41,7 +41,7 @@
     "lodash": "^4.17.21",
     "luxon": "3.7.2",
     "mongoose": "^9.7.3",
-    "morgan": "^1.11.0",
+    "morgan": "^1.12.1",
     "pug": "^3.0.4",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
